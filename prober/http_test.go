@@ -1544,3 +1544,27 @@ func TestBody(t *testing.T) {
 		}
 	}
 }
+
+func TestSlowRequestLimit(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		time.Sleep(10 * time.Nanosecond)
+		w.Header().Set("identifier", "deadbeef")
+	}))
+	defer ts.Close()
+
+	registry := prometheus.NewRegistry()
+	testCTX, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	var buf bytes.Buffer
+	logger := log.NewLogfmtLogger(&buf)
+	result := ProbeHTTP(testCTX, ts.URL, config.Module{Timeout: time.Second, HTTP: config.HTTPProbe{IPProtocolFallback: true, SlowRequestLimit: time.Nanosecond, SlowRequestLogHeader: "identifier"}}, registry, logger)
+
+	if !result {
+		t.Fatalf("Slow request test failed unexpectedly")
+	}
+
+	if !strings.Contains(buf.String(), "msg=\"Slow request\"") && !strings.Contains(buf.String(), "identifier=deadbeef") {
+		t.Fatalf("Expected log message not found")
+	}
+}

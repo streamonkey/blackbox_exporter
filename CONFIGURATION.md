@@ -68,6 +68,12 @@ modules:
   # Example: 10MB
   [ body_size_limit: <size> | default = 0 ]
 
+  # The maximum duration of a request before it is considered slow (but not failed)
+  [ slow_request_limit: <duration> ]
+
+  # The response header to log for slow requests, typically an ID
+  [ slow_request_log_header: <string> ]
+
   # The compression algorithm to use to decompress the response (gzip, br, deflate, identity).
   #
   # If an "Accept-Encoding" header is specified, it MUST be such that the compression algorithm

@@ -568,6 +568,16 @@ func ProbeHTTP(ctx context.Context, target string, module config.Module, registr
 		// At this point body is fully read and we can write end time.
 		tt.current.end = time.Now()
 
+		// If both slow request limit and log header are defined, log a warning with the specified response header
+		// if the request took longer than the limit.
+		slowRequestLimit := httpConfig.SlowRequestLimit
+		slowRequestLogHeader := httpConfig.SlowRequestLogHeader
+		if slowRequestLimit > 0 &&
+			slowRequestLogHeader != "" &&
+			tt.current.end.Sub(tt.current.start) > slowRequestLimit {
+			level.Warn(logger).Log("msg", "Slow request", slowRequestLogHeader, resp.Header.Get(slowRequestLogHeader))
+		}
+
 		// Check if there is a Last-Modified HTTP response header.
 		if t, err := http.ParseTime(resp.Header.Get("Last-Modified")); err == nil {
 			registry.MustRegister(probeHTTPLastModified)
