@@ -223,8 +223,8 @@ type HTTPProbe struct {
 	HTTPClientConfig             config.HTTPClientConfig `yaml:"http_client_config,inline"`
 	Compression                  string                  `yaml:"compression,omitempty"`
 	BodySizeLimit                units.Base2Bytes        `yaml:"body_size_limit,omitempty"`
-	SlowRequestLimit             time.Duration           `yaml:"slow_request_limit,omitempty"`
-	SlowRequestLogHeader         string                  `yaml:"slow_request_log_header,omitempty"`
+	SlowProbeLimit               time.Duration           `yaml:"slow_probe_limit,omitempty"`
+	SlowProbeLogHeader           string                  `yaml:"slow_probe_log_header,omitempty"`
 }
 
 type GRPCProbe struct {

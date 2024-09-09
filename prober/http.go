@@ -646,14 +646,14 @@ func ProbeHTTP(ctx context.Context, target string, module config.Module, registr
 		total += trace.end.Sub(trace.start)
 	}
 
-	// If both slow request limit and log header are defined, log a warning with the specified response header
+	// If both slow probe limit and log header are defined, log a warning with the specified response header
 	// if the request took longer than the limit.
-	slowRequestLimit := httpConfig.SlowRequestLimit
-	slowRequestLogHeader := httpConfig.SlowRequestLogHeader
-	if slowRequestLimit > 0 &&
-		slowRequestLogHeader != "" &&
-		total > slowRequestLimit {
-		level.Warn(logger).Log("msg", "Slow request", slowRequestLogHeader, resp.Header.Get(slowRequestLogHeader), "duration", total)
+	slowProbeLimit := httpConfig.SlowProbeLimit
+	slowProbeLogHeader := httpConfig.SlowProbeLogHeader
+	if slowProbeLimit > 0 &&
+		slowProbeLogHeader != "" &&
+		total > slowProbeLimit {
+		level.Warn(logger).Log("msg", "Slow probe", slowProbeLogHeader, resp.Header.Get(slowProbeLogHeader), "duration_seconds", total.Seconds())
 	}
 
 	if resp.TLS != nil {

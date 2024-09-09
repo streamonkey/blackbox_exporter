@@ -1545,7 +1545,7 @@ func TestBody(t *testing.T) {
 	}
 }
 
-func TestSlowRequestLimit(t *testing.T) {
+func TestSlowProbeLimit(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		time.Sleep(10 * time.Nanosecond)
 		w.Header().Set("identifier", "deadbeef")
@@ -1558,15 +1558,15 @@ func TestSlowRequestLimit(t *testing.T) {
 
 	var buf bytes.Buffer
 	logger := log.NewLogfmtLogger(&buf)
-	result := ProbeHTTP(testCTX, ts.URL, config.Module{Timeout: time.Second, HTTP: config.HTTPProbe{IPProtocolFallback: true, SlowRequestLimit: time.Nanosecond, SlowRequestLogHeader: "identifier"}}, registry, logger)
+	result := ProbeHTTP(testCTX, ts.URL, config.Module{Timeout: time.Second, HTTP: config.HTTPProbe{IPProtocolFallback: true, SlowProbeLimit: time.Nanosecond, SlowProbeLogHeader: "identifier"}}, registry, logger)
 
 	if !result {
-		t.Fatalf("Slow request test failed unexpectedly")
+		t.Fatalf("Slow probe test failed unexpectedly")
 	}
 
-	if !strings.Contains(buf.String(), "msg=\"Slow request\"") &&
-		!strings.Contains(buf.String(), "identifier=deadbeef") &&
-		!strings.Contains(buf.String(), "duration=") {
+	if !strings.Contains(buf.String(), "msg=\"Slow probe\"") ||
+		!strings.Contains(buf.String(), "identifier=deadbeef") ||
+		!strings.Contains(buf.String(), "duration_seconds=0.") {
 		t.Fatalf("Expected log message not found")
 	}
 }

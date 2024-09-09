@@ -69,10 +69,10 @@ modules:
   [ body_size_limit: <size> | default = 0 ]
 
   # The maximum duration of a request before it is considered slow (but not failed)
-  [ slow_request_limit: <duration> ]
+  [ slow_probe_limit: <duration> ]
 
-  # The response header to log for slow requests, typically an ID. Requires at least `--log.prober=warn`.
-  [ slow_request_log_header: <string> ]
+  # The response header to log for slow probes, typically an ID. Requires at least `--log.prober=warn`.
+  [ slow_probe_log_header: <string> ]
 
   # The compression algorithm to use to decompress the response (gzip, br, deflate, identity).
   #
