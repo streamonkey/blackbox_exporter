@@ -1564,7 +1564,9 @@ func TestSlowRequestLimit(t *testing.T) {
 		t.Fatalf("Slow request test failed unexpectedly")
 	}
 
-	if !strings.Contains(buf.String(), "msg=\"Slow request\"") && !strings.Contains(buf.String(), "identifier=deadbeef") {
+	if !strings.Contains(buf.String(), "msg=\"Slow request\"") &&
+		!strings.Contains(buf.String(), "identifier=deadbeef") &&
+		!strings.Contains(buf.String(), "duration=") {
 		t.Fatalf("Expected log message not found")
 	}
 }
